@@ -3,7 +3,6 @@ package com.example.demo.converter;
 import static java.util.stream.StreamSupport.stream;
 
 import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.springframework.stereotype.Component;
@@ -13,6 +12,11 @@ import com.example.demo.entity.Alert;
 
 @Component
 public class AlertConverter implements TypeConverters {
+
+    private static Object lookupAndConvert(TypeConverterRegistry registry, Class<?> componentType, Object v) {
+        var converter = registry.lookup(componentType, v.getClass());
+        return converter.convertTo(componentType, v);
+    }
 
     @Converter
     public Alert convert(Long source) {
@@ -37,7 +41,7 @@ public class AlertConverter implements TypeConverters {
     }
 
     @Converter(fallback = true)
-    public <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
+    public <T> T convertTo(Class<T> type, Object value, TypeConverterRegistry registry) {
         if (type.isArray() && Iterable.class.isAssignableFrom(value.getClass())) {
             var componentType = type.getComponentType();
             return ((T) stream(((Iterable<T>) value).spliterator(), false)
@@ -45,10 +49,5 @@ public class AlertConverter implements TypeConverters {
                     .toArray());
         }
         return null;
-    }
-
-    private Object lookupAndConvert(TypeConverterRegistry registry, Class<?> componentType, Object v) {
-        var converter = registry.lookup(componentType, v.getClass());
-        return converter.convertTo(componentType, v);
     }
 }
