@@ -1,0 +1,14 @@
+camel:
+  component:
+    servlet:
+      mapping:
+        context-path: /api/*
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    schema: classpath:data.sql
+    driverClassName: org.h2.Driver
+
+notification:
+  url: ${NOTIFICATION_URL:https://webhook.site/3ac5efc3-ba06-47ca-8125-ffd17fe19395}
