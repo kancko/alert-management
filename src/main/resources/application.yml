@@ -5,6 +5,9 @@ camel:
         context-path: /api/*
 
 spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
   datasource:
     url: jdbc:h2:mem:testdb
     schema: classpath:data.sql
