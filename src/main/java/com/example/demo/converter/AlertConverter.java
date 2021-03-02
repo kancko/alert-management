@@ -13,9 +13,9 @@ import com.example.demo.entity.Alert;
 @Component
 public class AlertConverter implements TypeConverters {
 
-    private static Object lookupAndConvert(TypeConverterRegistry registry, Class<?> componentType, Object v) {
-        var converter = registry.lookup(componentType, v.getClass());
-        return converter.convertTo(componentType, v);
+    private static <T> T lookupAndConvert(TypeConverterRegistry registry, Class<T> componentType, Object value) {
+        var converter = registry.lookup(componentType, value.getClass());
+        return converter.convertTo(componentType, value);
     }
 
     @Converter
@@ -44,7 +44,7 @@ public class AlertConverter implements TypeConverters {
     public <T> T convertTo(Class<T> type, Object value, TypeConverterRegistry registry) {
         if (type.isArray() && Iterable.class.isAssignableFrom(value.getClass())) {
             var componentType = type.getComponentType();
-            return ((T) stream(((Iterable<T>) value).spliterator(), false)
+            return ((T) stream(((Iterable) value).spliterator(), false)
                     .map(v -> lookupAndConvert(registry, componentType, v))
                     .toArray());
         }
